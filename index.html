@@ -1,0 +1,379 @@
+from pathlib import Path
+
+html = r'''<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#07111f">
+<title>BancoChain | Presentación del proyecto</title>
+<style>
+:root{
+  --bg:#07111f;--panel:#101f35;--panel2:#132943;--cyan:#54e6ef;
+  --blue:#6599ff;--gold:#ffd166;--text:#f2f6ff;--muted:#b5c3d8;
+  --green:#69e6b0;--red:#ff8395;--line:#2b4260
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:
+radial-gradient(ellipse at 12% 10%,#163d6a88,transparent 38%),
+radial-gradient(ellipse at 90% 85%,#123c4d77,transparent 35%)}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 24px;background:#07111fee;border-bottom:1px solid #ffffff12;backdrop-filter:blur(12px)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:1.5px}
+.brand-icon{display:grid;place-items:center;width:35px;height:35px;border-radius:10px;background:linear-gradient(135deg,var(--cyan),var(--blue));color:#07111f;font-size:21px}
+.pill{border:1px solid #54e6ef55;color:var(--cyan);border-radius:30px;padding:7px 11px;font-size:11px;font-weight:800}
+.counter{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}.counter strong{color:var(--gold);font-size:16px}
+.progress{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--cyan),var(--blue),var(--gold));z-index:30;width:0;transition:width .25s}
+.deck{min-height:100vh}
+.slide{display:none;min-height:100vh;padding:100px 34px 95px;align-items:center;justify-content:center}
+.slide.active{display:flex;animation:appear .25s ease}
+.wrap{width:min(1120px,100%);margin:auto}
+@keyframes appear{from{opacity:.4;transform:translateY(8px)}to{opacity:1;transform:none}}
+.kicker{color:var(--cyan);font-size:12px;font-weight:900;letter-spacing:1.7px;text-transform:uppercase;margin-bottom:14px}
+h1{font-size:clamp(48px,8vw,94px);line-height:.98;letter-spacing:-3px;margin-bottom:20px}
+h1 span{color:var(--cyan)}
+h2{font-size:clamp(27px,4vw,43px);line-height:1.15;letter-spacing:-1px;margin-bottom:14px}
+h2 span{color:var(--gold)}
+h3{font-size:16px;color:var(--gold);margin:9px 0 7px}
+p{color:#dce6f5;font-size:14px;line-height:1.7}
+.lead{font-size:18px;color:#fff;max-width:760px}
+.muted{color:var(--muted)}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:26px;align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.chip{padding:8px 12px;border:1px solid var(--line);border-radius:30px;background:#ffffff08;font-size:12px;font-weight:800;color:#dceaff}
+.panel{background:linear-gradient(145deg,#142a47,#0c192b);border:1px solid #54e6ef35;border-radius:18px;padding:22px;box-shadow:0 18px 50px #0003}
+.panel-title{font-size:12px;color:var(--gold);font-weight:900;letter-spacing:1px}
+.chain{display:flex;align-items:center;gap:8px;margin:22px 0}
+.block{flex:1;min-width:0;border:1px solid #54e6ef66;background:#07111f;border-radius:11px;text-align:center;padding:15px 7px;font-size:12px;font-weight:900}
+.block small{display:block;color:var(--cyan);font-size:10px;font-weight:600;margin-top:7px}
+.arrow{color:var(--cyan);font-size:21px;font-weight:900}
+.stat{display:flex;justify-content:space-between;gap:12px;padding:11px 12px;background:#ffffff08;border-radius:9px;margin-top:8px;font-size:12px}
+.stat b{color:var(--gold);text-align:right}
+.grid{display:grid;gap:14px;margin-top:22px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.card{position:relative;min-width:0;padding:18px;background:linear-gradient(155deg,#132943,#0d1a2d);border:1px solid #ffffff18;border-radius:15px}
+.card .icon{font-size:25px}
+.card h3{margin-top:10px}
+.card p{font-size:12.5px;line-height:1.65}
+.tag{display:inline-block;color:var(--cyan);font-size:10px;font-weight:900;letter-spacing:.8px;border:1px solid #54e6ef55;background:#54e6ef10;padding:5px 8px;border-radius:30px}
+.callout{padding:13px 15px;margin-top:16px;border-left:3px solid var(--cyan);border-radius:0 10px 10px 0;background:#54e6ef0d;font-size:12.5px;line-height:1.7;color:#e8f1ff}
+.callout b{color:var(--cyan)}
+.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:stretch;margin-top:24px}
+.flowbox{display:flex;flex-direction:column;justify-content:center;text-align:center;padding:17px 12px;background:#122641;border:1px solid #54e6ef44;border-radius:12px;font-size:13px;font-weight:900}
+.flowbox small{display:block;color:var(--muted);font-size:11px;font-weight:500;line-height:1.6;margin-top:7px}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+.compare-box{padding:17px;border-radius:13px;background:#ffffff07;border:1px solid var(--line)}
+.compare-box h3{margin-top:0}
+ul{padding-left:19px;margin-top:8px}li{font-size:12.5px;color:#dce6f5;line-height:1.8}
+.code{padding:14px;margin-top:12px;border-radius:10px;background:#060d18;border:1px solid #263c57;color:#c8f5fa;font:12px/1.8 ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere}
+.steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:22px}
+.step{padding:14px 11px;text-align:center;background:#11243d;border:1px solid #2b496b;border-radius:13px}
+.step b{display:grid;place-items:center;margin:0 auto 10px;width:31px;height:31px;border-radius:50%;background:var(--cyan);color:#07111f}
+.step h3{font-size:11px;margin:0 0 7px}
+.step p{font-size:11px;line-height:1.55}
+.glossary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:20px}
+.term{padding:15px;border:1px solid #ffffff1b;background:#ffffff07;border-radius:12px}
+.term strong{display:block;color:var(--cyan);font-size:13px;margin-bottom:6px}
+.term p{font-size:12px;line-height:1.6}
+.controls{position:fixed;bottom:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 22px;background:#07111fee;border-top:1px solid #ffffff12;backdrop-filter:blur(12px)}
+.hint{font-size:11px;color:var(--muted)}
+.nav{display:flex;gap:7px}
+button{font:inherit;cursor:pointer}
+.btn{border:1px solid #ffffff28;background:#ffffff0c;color:#fff;border-radius:10px;padding:10px 14px;font-size:12px;font-weight:800}
+.btn.primary{background:var(--gold);border-color:var(--gold);color:#1a1608}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+.dots{display:flex;gap:5px;align-items:center}
+.dot{width:8px;height:8px;border:0;border-radius:10px;background:#ffffff38;padding:0}
+.dot.on{width:22px;background:var(--cyan)}
+.cta{padding:24px;text-align:center;border-radius:16px;background:linear-gradient(135deg,#ffd166,#ffab5e);color:#17130a}
+.cta h3{font-size:22px;color:#17130a}.cta p{color:#282012;font-weight:700}
+@media(max-width:850px){
+ .slide{padding:88px 20px 90px}
+ .hero-grid{grid-template-columns:1fr}
+ .g4,.g3{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .glossary{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .hint,.dots{display:none}
+}
+@media(max-width:560px){
+ .topbar{padding:10px 12px}.brand{font-size:11px}.brand-icon{width:29px;height:29px}
+ .pill{font-size:9px;padding:6px 8px}.counter{font-size:11px}
+ .slide{padding:82px 14px 82px}
+ .g2,.g3,.g4,.compare,.glossary{grid-template-columns:1fr}
+ .flow{grid-template-columns:1fr}.arrow{transform:rotate(90deg);text-align:center}
+ .steps{grid-template-columns:1fr 1fr}
+ .controls{padding:9px 12px}.btn{padding:9px 11px}
+ h1{letter-spacing:-1.5px}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header class="topbar">
+  <div class="brand"><div class="brand-icon">⛓</div><span>BANCOCHAIN</span></div>
+  <div class="pill">PRESENTACIÓN DEL PROYECTO</div>
+  <div class="counter"><strong id="current">01</strong> / <span id="total">12</span></div>
+</header>
+
+<main class="deck">
+<section class="slide active"><div class="wrap hero-grid">
+  <div>
+    <div class="kicker">Proyecto universitario · banca digital y blockchain</div>
+    <h1>BANCO<span>CHAIN</span></h1>
+    <p class="lead">Una plataforma bancaria educativa que permite practicar transferencias y comprobar la integridad de sus registros mediante una blockchain privada local.</p>
+    <div class="chips"><span class="chip">Java 21</span><span class="chip">Spring Boot</span><span class="chip">React y TypeScript</span><span class="chip">PostgreSQL</span></div>
+    <div class="callout"><b>Importante:</b> utiliza datos y dinero de prueba. No es un banco real ni una plataforma para administrar fondos reales.</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">CÓMO SE RELACIONAN LOS BLOQUES</div>
+    <div class="chain"><div class="block">BLOQUE 0<small>INICIO</small></div><div class="arrow">→</div><div class="block">BLOQUE 1<small>MOVIMIENTO</small></div><div class="arrow">→</div><div class="block">BLOQUE 2<small>VERIFICACIÓN</small></div></div>
+    <div class="stat"><span>Acceso</span><b>JWT y roles</b></div>
+    <div class="stat"><span>Integridad</span><b>SHA-256 y Merkle</b></div>
+    <div class="stat"><span>Datos</span><b>PostgreSQL</b></div>
+  </div>
+</div></section>
+
+<section class="slide"><div class="wrap">
+  <div class="kicker">01 · Propósito</div><h2>¿Qué es <span>BancoChain?</span></h2>
+  <p class="lead">Es una aplicación de práctica que combina operaciones bancarias simuladas con un registro de movimientos verificable.</p>
+  <div class="grid g4">
+    <article class="card"><div class="icon">🏦</div><h3>Simular operaciones</h3><p>Crear cuentas, consultar saldos y enviar transferencias de prueba en quetzales.</p></article>
+    <article class="card"><div class="icon">🔐</div><h3>Proteger el acceso</h3><p>Iniciar sesión y aplicar permisos según el rol de cada usuario.</p></article>
+    <article class="card"><div class="icon">⛓️</div><h3>Verificar registros</h3><p>Relacionar movimientos con bloques y revisar sus huellas digitales.</p></article>
+    <article class="card"><div class="icon">🧪</div><h3>Hacer pruebas</h3><p>Modificar una copia de la cadena para aprender a detectar inconsistencias.</p></article>
+  </div>
+  <div class="callout"><b>Alcance:</b> la red y el consenso son educativos. El proyecto no implementa una red pública como Bitcoin o Ethereum.</div>
+</div></section>
+
+<section class="slide"><div class="wrap">
+  <div class="kicker">02 · Arquitectura</div><h2>Tres componentes, <span>una aplicación</span></h2>
+  <p class="muted">Cada componente tiene una tarea diferente. El backend valida las operaciones y aplica las reglas del sistema.</p>
+  <div class="flow">
+    <div class="flowbox">FRONTEND<small>React y TypeScript<br>Interfaz y formularios</small></div><div class="arrow">⇄</div>
+    <div class="flowbox">BACKEND<small>Java y Spring Boot<br>Seguridad y reglas bancarias</small></div><div class="arrow">⇄</div>
+    <div class="flowbox">BASE DE DATOS<small>PostgreSQL<br>Usuarios, cuentas y movimientos</small></div>
+  </div>
+  <div class="grid g3">
+    <article class="card"><h3>API REST</h3><p>Recibe solicitudes del frontend y devuelve respuestas al cliente.</p></article>
+    <article class="card"><h3>Lógica de negocio</h3><p>Comprueba permisos, propiedad de cuentas, saldo, monto y límites antes de aceptar una operación.</p></article>
+    <article class="card"><h3>Persistencia</h3><p>Guarda la información. Flyway permite controlar las versiones de los cambios de la base de datos.</p></article>
+  </div>
+  <div class="code">React → Axios → API REST → Spring Boot → PostgreSQL y servicios de blockchain</div>
+</div></section>
+
+<section class="slide"><div class="wrap">
+  <div class="kicker">03 · Tecnologías</div><h2>¿Qué aporta cada <span>tecnología?</span></h2>
+  <div class="grid g3">
+    <article class="card"><span class="tag">BACKEND</span><h3>Java 21 y Spring Boot</h3><p>Implementan las reglas, los servicios y los endpoints de la aplicación.</p></article>
+    <article class="card"><span class="tag">FRONTEND</span><h3>React y TypeScript</h3><p>Construyen las pantallas y ayudan a organizar el código de la interfaz.</p></article>
+    <article class="card"><span class="tag">COMUNICACIÓN</span><h3>Axios</h3><p>Envía solicitudes HTTP desde el frontend hacia la API.</p></article>
+    <article class="card"><span class="tag">DATOS</span><h3>PostgreSQL</h3><p>Almacena usuarios, cuentas, transferencias, auditoría y registros de blockchain.</p></article>
+    <article class="card"><span class="tag">PERSISTENCIA</span><h3>JPA y Hibernate</h3><p>Facilitan la relación entre los objetos Java y las tablas de la base de datos.</p></article>
+    <article class="card"><span class="tag">SEGURIDAD</span><h3>Spring Security</h3><p>Ayuda a validar la identidad y controlar el acceso a las operaciones.</p></article>
+  </div>
+</div></section>
+
+<section class="slide"><div class="wrap">
+  <div class="kicker">04 · Transferencias</div><h2>¿Qué ocurre al enviar <span>dinero de prueba?</span></h2>
+  <p class="muted">El sistema no debe aceptar una transferencia solo porque el usuario envió el formulario.</p>
+  <div class="steps">
+    <div class="step"><b>1</b><h3>INICIAR SESIÓN</h3><p>El backend valida las credenciales.</p></div>
+    <div class="step"><b>2</b><h3>INDICAR DATOS</h3><p>Se eligen cuenta de origen, destino y monto.</p></div>
+    <div class="step"><b>3</b><h3>VALIDAR</h3><p>Se comprueban permisos, saldo y límites.</p></div>
+    <div class="step"><b>4</b><h3>CONFIRMAR</h3><p>Se actualizan las cuentas y se registra el movimiento.</p></div>
+    <div class="step"><b>5</b><h3>VERIFICAR</h3><p>Se crea el registro asociado a blockchain y se valida la cadena.</p></div>
+  </div>
+  <div class="grid g2">
+    <article class="card"><h3>Operación atómica</h3><p>La transferencia se trata como una sola operación. Si falla una parte crítica, no debe quedar solo el débito o solo el crédito.</p></article>
+    <article class="card"><h3>Clave de idempotencia</h3><p>Identifica una solicitud para reconocer reintentos y reducir el riesgo de procesar dos veces la misma transferencia.</p></article>
+  </div>
+</div></section>
+
+<section class="slide"><div class="wrap">
+  <div class="kicker">05 · Seguridad</div><h2>Identidad y permisos <span>no son lo mismo</span></h2>
+  <div class="grid g4">
+    <article class="card"><span class="tag">JWT</span><h3>Token de acceso</h3><p>Permite presentar la sesión en solicitudes protegidas. El backend valida el token. No es una contraseña ni cifra automáticamente su contenido.</p></article>
+    <article class="card"><span class="tag">REFRESH TOKEN</span><h3>Renovar sesión</h3><p>Permite solicitar un nuevo token de acceso cuando vence, según las reglas del sistema.</p></article>
+    <article class="card"><span class="tag">ARGON2ID</span><h3>Proteger contraseñas</h3><p>Calcula un hash diseñado para dificultar los intentos de adivinar contraseñas. No se debe guardar la contraseña en texto plano.</p></article>
+    <article class="card"><span class="tag">ROLES</span><h3>Controlar permisos</h3><p>CUSTOMER, ADMIN, AUDITOR y BLOCKCHAIN_ADMIN determinan qué acciones puede realizar cada usuario.</p></article>
+  </div>
+  <div class="flow">
+    <div class="flowbox">Credenciales<small>Correo y contraseña</small></div><div class="arrow">→</div>
+    <div class="flowbox">Autenticación<small>Validar identidad</small></div><div class="arrow">→</div>
+    <div class="flowbox">Autorización<small>Comprobar permisos</small></div>
+  </div>
+  <div class="callout"><b>Idea clave:</b> tener una sesión válida no significa tener permiso para todas las funciones.</div>
+</div></section>
+
+<section class="slide"><div class="wrap">
+  <div class="kicker">06 · SHA-256</div><h2>¿Qué significa <span>256 bits?</span></h2>
+  <p class="lead">SHA-256 convierte datos de cualquier tamaño en una huella digital de tamaño fijo.</p>
+  <div class="grid g3">
+    <article class="card"><div class="icon">🔢</div><h3>256 bits</h3><p>El resultado tiene 256 bits, equivalentes a 32 bytes.</p></article>
+    <article class="card"><div class="icon">🔠</div><h3>64 caracteres</h3><p>Normalmente se representa con 64 caracteres hexadecimales. Cada carácter representa 4 bits.</p></article>
+    <article class="card"><div class="icon">🧩</div><h3>Detectar cambios</h3><p>Un cambio en los datos produce normalmente una huella muy diferente.</p></article>
+  </div>
+  <div class="compare">
+    <div class="compare-box"><h3>Ejemplo sencillo</h3><p>El texto “Hola” y el texto “Hola!” generan hashes diferentes.</p><div class="code">SHA-256("Hola") → hash A<br>SHA-256("Hola!") → hash B</div></div>
+    <div class="compare-box"><h3>¿Para qué se usa?</h3><p>BancoChain utiliza hashes para identificar transacciones y bloques, y para comprobar si los datos coinciden con los valores calculados.</p></div>
+  </div>
+  <div class="callout"><b>Recuerda:</b> un hash no cifra ni permite recuperar el texto original. Ayuda a verificar integridad, pero no sustituye una firma digital.</div>
+</div></section>
+
+<section class="slide"><div class="wrap">
+  <div class="kicker">07 · Glosario blockchain</div><h2>Palabras importantes, <span>explicadas fácil</span></h2>
+  <div class="glossary">
+    <div class="term"><strong>Bloque</strong><p>Contenedor de información que incluye datos de transacciones y valores para verificar su integridad.</p></div>
+    <div class="term"><strong>Hash</strong><p>Huella digital calculada a partir de datos.</p></div>
+    <div class="term"><strong>previousHash</strong><p>Hash del bloque anterior. Enlaza un bloque con el que le precede.</p></div>
+    <div class="term"><strong>Merkle Tree</strong><p>Árbol que combina hashes de transacciones hasta producir una huella final.</p></div>
+    <div class="term"><strong>Merkle Root</strong><p>Hash de la parte superior del árbol; resume las transacciones representadas en él.</p></div>
+    <div class="term"><strong>Nonce</strong><p>Valor que puede probarse o utilizarse una vez, según el mecanismo. Su función depende del contexto.</p></div>
+    <div class="term"><strong>Mempool</strong><p>Conjunto de transacciones pendientes de incluirse en un bloque o procesarse.</p></div>
+    <div class="term"><strong>Nodo</strong><p>Participante de la red que puede almacenar información o validar la cadena. Aquí los nodos son simulados.</p></div>
+    <div class="term"><strong>Consenso</strong><p>Mecanismo para comparar validaciones y decidir si se acepta una propuesta.</p></div>
+  </div>
+  <div class="callout"><b>En una frase:</b> el hash identifica los datos; previousHash enlaza bloques; Merkle Root resume transacciones; los nodos revisan la cadena.</div>
+</div></section>
+
+<section class="slide"><div class="wrap">
+  <div class="kicker">08 · Criptografía</div><h2>Hash, firma y cifrado <span>son diferentes</span></h2>
+  <div class="grid g3">
+    <article class="card"><span class="tag">SHA-256</span><div class="icon">🧬</div><h3>Hash</h3><p>Genera una huella digital para ayudar a detectar cambios. No demuestra por sí solo quién creó los datos.</p></article>
+    <article class="card"><span class="tag">Ed25519</span><div class="icon">✍️</div><h3>Firma digital</h3><p>La clave privada firma y la clave pública verifica. Ayuda a comprobar que la firma corresponde a los datos y a esa clave pública.</p></article>
+    <article class="card"><span class="tag">AES-GCM</span><div class="icon">🔒</div><h3>Cifrado</h3><p>Protege la confidencialidad. AES-GCM también permite comprobar la autenticidad de los datos cifrados.</p></article>
+    <article class="card"><span class="tag">PBKDF2</span><h3>Derivación de claves</h3><p>Usa una contraseña o secreto, una sal y un número de iteraciones para derivar una clave.</p></article>
+    <article class="card"><span class="tag">AES-256</span><h3>Tamaño de clave</h3><p>Indica una clave AES de 256 bits, equivalente a 32 bytes; no significa 256 caracteres.</p></article>
+    <article class="card"><span class="tag">REPLAY ATTACK</span><h3>Repetición de solicitud</h3><p>Ocurre cuando se intenta reutilizar un mensaje o solicitud anterior. Los identificadores y controles contra repeticiones pueden ayudar a prevenirlo.</p></article>
+  </div>
+  <div class="callout"><b>Resumen:</b> el hash ayuda a comprobar integridad; la firma verifica autenticidad e integridad; el cifrado protege la confidencialidad.</div>
+</div></section>
+
+<section class="slide"><div class="wrap">
+  <div class="kicker">09 · Integridad de la cadena</div><h2>¿Cómo se conectan <span>los bloques?</span></h2>
+  <div class="panel">
+    <div class="chain"><div class="block">BLOQUE 0<small>HASH A</small></div><div class="arrow">→</div><div class="block">BLOQUE 1<small>PREVIOUS HASH = A</small></div><div class="arrow">→</div><div class="block">BLOQUE 2<small>PREVIOUS HASH = B</small></div></div>
+    <p class="muted">Esquema ilustrativo: las letras representan hashes de ejemplo, no datos reales de la aplicación.</p>
+  </div>
+  <div class="grid g4">
+    <article class="card"><h3>Hash</h3><p>Huella de los datos del bloque.</p></article>
+    <article class="card"><h3>previousHash</h3><p>Enlace al bloque anterior.</p></article>
+    <article class="card"><h3>Merkle Root</h3><p>Resumen de las transacciones del bloque.</p></article>
+    <article class="card"><h3>Nonce</h3><p>Valor que puede probarse al buscar un hash que cumpla una condición, si el diseño lo requiere.</p></article>
+  </div>
+  <div class="callout"><b>Si se altera un dato:</b> puede cambiar su hash, la Merkle Root o el enlace con el bloque anterior. La validación compara los valores calculados con los esperados para señalar inconsistencias.</div>
+</div></section>
+
+<section class="slide"><div class="wrap">
+  <div class="kicker">10 · Nodos y auditoría</div><h2>Validar y conservar <span>trazabilidad</span></h2>
+  <div class="grid g3">
+    <article class="card"><div class="icon">🖥️</div><h3>Nodos validadores</h3><p>BancoChain representa nodos como NODE-01, NODE-02 y NODE-03 para practicar la validación de la cadena.</p></article>
+    <article class="card"><div class="icon">🤝</div><h3>Consenso educativo</h3><p>Permite comparar las validaciones de los nodos. No es una implementación real del consenso de Bitcoin, Ethereum o PBFT.</p></article>
+    <article class="card"><div class="icon">🧾</div><h3>Auditoría</h3><p>Registra eventos relevantes para revisar qué acción ocurrió y cuándo.</p></article>
+  </div>
+  <div class="compare">
+    <div class="compare-box"><h3>Ejemplos de eventos</h3><div class="code">LOGIN_SUCCESS<br>LOGIN_FAILED<br>ACCOUNT_CREATED<br>TRANSFER_COMPLETED<br>BLOCK_CREATED<br>CONSENSUS_REACHED</div></div>
+    <div class="compare-box"><h3>¿Qué no debe registrarse?</h3><p>Contraseñas, tokens ni claves privadas. La auditoría debe ayudar a investigar sin exponer secretos.</p><p class="muted" style="margin-top:10px;font-size:12px">Los nodos simulados no equivalen automáticamente a servidores independientes.</p></div>
+  </div>
+</div></section>
+
+<section class="slide"><div class="wrap">
+  <div class="kicker">11 · Laboratorio y pruebas</div><h2>Modificar una copia para <span>aprender de los errores</span></h2>
+  <p class="lead">El laboratorio permite experimentar con una copia aislada de la cadena para estudiar cómo se detectan los cambios.</p>
+  <div class="grid g4">
+    <article class="card"><div class="icon">🧪</div><h3>1. Preparar</h3><p>Crear una copia de la cadena para hacer pruebas.</p></article>
+    <article class="card"><div class="icon">✏️</div><h3>2. Alterar</h3><p>Cambiar datos como emisor, receptor o monto en la copia.</p></article>
+    <article class="card"><div class="icon">🔎</div><h3>3. Validar</h3><p>Comprobar hashes, Merkle Root y enlaces entre bloques.</p></article>
+    <article class="card"><div class="icon">♻️</div><h3>4. Restaurar</h3><p>Restablecer la copia para comenzar de nuevo.</p></article>
+  </div>
+  <div class="grid g2">
+    <article class="card"><h3>¿Qué comprueban las pruebas?</h3><p>El cálculo de hashes, enlaces entre bloques, árbol de Merkle, firmas Ed25519, nonce, intentos de repetición, consenso y comportamiento cuando un nodo está desconectado.</p></article>
+    <article class="card"><h3>¿Qué significa que una prueba pase?</h3><p>Que un comportamiento específico cumple el resultado esperado. No garantiza por sí solo que toda la aplicación esté libre de errores.</p></article>
+  </div>
+</div></section>
+
+<section class="slide"><div class="wrap">
+  <div class="kicker">12 · Conclusión</div><h2>BancoChain integra <span>operaciones, seguridad y verificación</span></h2>
+  <p class="lead">El proyecto muestra cómo se conectan una interfaz web, una API, una base de datos y una blockchain educativa.</p>
+  <div class="grid g3">
+    <article class="card"><div class="icon">🖥️</div><h3>Interfaz</h3><p>Permite iniciar sesión, gestionar cuentas, consultar movimientos, explorar bloques y acceder al laboratorio.</p></article>
+    <article class="card"><div class="icon">⚙️</div><h3>Backend</h3><p>Aplica las reglas bancarias, valida permisos y procesa las solicitudes recibidas por la API.</p></article>
+    <article class="card"><div class="icon">⛓️</div><h3>Blockchain</h3><p>Relaciona transacciones con bloques y permite comprobar la integridad del registro.</p></article>
+  </div>
+  <div class="compare">
+    <div class="compare-box"><h3>Demostración recomendada</h3><ul><li>Iniciar sesión y explicar los roles.</li><li>Mostrar las cuentas y el saldo.</li><li>Realizar una transferencia de prueba.</li><li>Buscarla en el historial y el explorador.</li><li>Validar la cadena y probar el laboratorio.</li></ul></div>
+    <div class="cta"><h3>⛓ BANCOCHAIN</h3><p>Una plataforma educativa para comprender cómo se diseña, protege y verifica un sistema bancario digital.</p><p style="margin-top:12px">Java · React · PostgreSQL · Blockchain</p><p style="margin-top:16px">Gracias por su atención<br>Preguntas y demostración</p></div>
+  </div>
+  <div class="callout"><b>Conclusión final:</b> BancoChain es un proyecto educativo. No es un banco regulado, no maneja dinero real y su consenso está diseñado para aprender, no para sustituir una red blockchain de producción.</div>
+</div></section>
+</main>
+
+<footer class="controls">
+  <div class="hint">← → navegar · Espacio avanzar · F pantalla completa</div>
+  <div class="dots" id="dots" aria-label="Navegación por diapositivas"></div>
+  <div class="nav">
+    <button class="btn" id="prev" aria-label="Diapositiva anterior">← Anterior</button>
+    <button class="btn primary" id="next" aria-label="Diapositiva siguiente">Siguiente →</button>
+    <button class="btn" id="full" aria-label="Pantalla completa" title="Pantalla completa">⛶</button>
+  </div>
+</footer>
+<script>
+const slides=[...document.querySelectorAll(".slide")];
+const progress=document.getElementById("progress");
+const current=document.getElementById("current");
+const total=document.getElementById("total");
+const dots=document.getElementById("dots");
+const prev=document.getElementById("prev");
+const next=document.getElementById("next");
+let cur=0;
+total.textContent=String(slides.length).padStart(2,"0");
+slides.forEach((slide,i)=>{
+  const dot=document.createElement("button");
+  dot.className="dot";
+  dot.title="Ir a diapositiva "+(i+1);
+  dot.setAttribute("aria-label",dot.title);
+  dot.addEventListener("click",()=>go(i));
+  dots.appendChild(dot);
+});
+function go(index){
+  cur=Math.max(0,Math.min(slides.length-1,index));
+  slides.forEach((slide,i)=>slide.classList.toggle("active",i===cur));
+  [...dots.children].forEach((dot,i)=>dot.classList.toggle("on",i===cur));
+  current.textContent=String(cur+1).padStart(2,"0");
+  progress.style.width=((cur+1)/slides.length*100)+"%";
+  prev.disabled=cur===0;
+  next.disabled=cur===slides.length-1;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+prev.addEventListener("click",()=>go(cur-1));
+next.addEventListener("click",()=>go(cur+1));
+document.addEventListener("keydown",event=>{
+  if(["ArrowRight","PageDown"," "].includes(event.key)){event.preventDefault();go(cur+1);}
+  if(["ArrowLeft","PageUp"].includes(event.key)){event.preventDefault();go(cur-1);}
+  if(event.key==="Home")go(0);
+  if(event.key==="End")go(slides.length-1);
+  if(event.key.toLowerCase()==="f")toggleFull();
+});
+function toggleFull(){
+  if(!document.fullscreenElement){document.documentElement.requestFullscreen?.().catch(()=>{});}
+  else{document.exitFullscreen?.();}
+}
+document.getElementById("full").addEventListener("click",toggleFull);
+let touchStartX=0;
+document.addEventListener("touchstart",event=>{touchStartX=event.touches[0].clientX;},{passive:true});
+document.addEventListener("touchend",event=>{
+  const distance=event.changedTouches[0].clientX-touchStartX;
+  if(Math.abs(distance)>65)go(cur+(distance<0?1:-1));
+},{passive:true});
+go(0);
+</script>
+</body>
+</html>
+'''
+out = Path("/mnt/data/BancoChain_presentacion_mejorada.html")
+out.write_text(html, encoding="utf-8")
+print(f"Creado: {out} | {len(html)} caracteres | {html.count('<section class=\"slide') } diapositivas")
